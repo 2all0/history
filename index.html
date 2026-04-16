@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국 현대사 학습 퀴즈</title>
+    <!-- 구글 폰트: 주아체(Jua) -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Jua', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .card {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .card-front {
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+        }
+        .card-back {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            transform: rotateY(180deg);
+            border: 2px solid #bee3f8;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: #2d3748;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: rgba(66, 153, 225, 0.3);
+            z-index: -1;
+        }
+        .grid-header {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-700 mb-4">🇰🇷 한국 현대사 학습판</h1>
+            <p class="text-xl text-gray-600">카드를 클릭하여 숨겨진 내용을 확인해보세요!</p>
+        </header>
+
+        <!-- 민주화 발전 섹션 -->
+        <section class="mb-16">
+            <h2 class="section-title">1. 민주화 발전</h2>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-2 hidden md:grid">
+                <div class="grid-header">구분</div>
+                <div class="grid-header">이름</div>
+                <div class="grid-header">연도</div>
+                <div class="grid-header">대통령</div>
+                <div class="grid-header">사건</div>
+                <div class="grid-header">인물</div>
+            </div>
+            
+            <div id="democracy-grid" class="grid grid-cols-2 md:grid-cols-6 gap-3">
+                <!-- Data will be injected here -->
+            </div>
+        </section>
+
+        <!-- 산업화 발전 섹션 -->
+        <section class="mb-16">
+            <h2 class="section-title">2. 산업화 발전</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2 hidden md:grid">
+                <div class="grid-header">연도</div>
+                <div class="grid-header">키워드</div>
+                <div class="grid-header">주요 생산품</div>
+                <div class="grid-header">발전된 것 / 특징</div>
+            </div>
+            <div id="industry-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <!-- Data will be injected here -->
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-500 mt-8 pb-8">
+            <p>© 2024 현대사 학습 퀴즈 - 클릭하면 정답이 보입니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        const democracyData = [
+            ["4", "4.19 혁명", "1960", "이승만", "3.15 부정선거", "김주열"],
+            ["5", "5.18 민주화운동", "1980", "전두환", "군사정변", "위르겐 힌츠페터"],
+            ["6", "6월 민주항쟁", "1987", "전두환", "간선제", "박종철, 이한열"]
+        ];
+
+        const industryData = [
+            ["1950", "생활 관련", "밀가루, 설탕, 면직물", "-"],
+            ["1960", "경공업", "신발, 가발, 의류", "발전소, 고속국도, 항만 / 독일 파견(간호사, 광부)"],
+            ["1970", "중화학공업", "철강, 조선, 석유화학", "교육 시설, 연구소, 대규모 공업 단지"],
+            ["1980", "-", "자동차, 정밀 기계, 전자 제품", "-"]
+        ];
+
+        function createCard(text, index, isHeader = false) {
+            const card = document.createElement('div');
+            card.className = 'card h-24 md:h-32';
+            card.onclick = () => card.classList.toggle('is-flipped');
+
+            const inner = document.createElement('div');
+            inner.className = 'card-inner';
+
+            const front = document.createElement('div');
+            front.className = 'card-front';
+            front.innerHTML = `<span class="text-gray-400 text-sm">클릭</span>`;
+
+            const back = document.createElement('div');
+            back.className = 'card-back';
+            back.innerHTML = `<span class="text-lg md:text-xl font-bold">${text}</span>`;
+
+            inner.appendChild(front);
+            inner.appendChild(back);
+            card.appendChild(inner);
+            return card;
+        }
+
+        const demGrid = document.getElementById('democracy-grid');
+        democracyData.forEach(row => {
+            row.forEach(cell => {
+                demGrid.appendChild(createCard(cell));
+            });
+        });
+
+        const indGrid = document.getElementById('industry-grid');
+        industryData.forEach(row => {
+            row.forEach(cell => {
+                indGrid.appendChild(createCard(cell));
+            });
+        });
+    </script>
+</body>
+</html>
